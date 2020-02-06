@@ -1,7 +1,7 @@
 Package: shintoanalytics
 Type: Package
 Title: Log user login and browser info to shintoanalytics
-Version: 0.1
+Version: 0.2
 Author: Remko Duursma
 Maintainer: Remko Duursma <remko@shintolabs.nl>
 Description: Writes login data to Shinto Labs dev server.
