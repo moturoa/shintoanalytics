@@ -6,5 +6,4 @@ set_browser_info <- function(id = "navigatorInfo", session =  getDefaultReactive
   
   session$sendCustomMessage("navigatorInfo", list(data = id))
   
-  
 }

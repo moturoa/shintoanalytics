@@ -1,11 +1,14 @@
 #' Connect to shinto devpostgres02
 #'@export
-shinto_db_connection <- function(what = c("CBS","BRKdata","BAGdata","shintoanalytics"), file = "conf/config.yml"){
+#'@importFrom config get
+#'@importFrom DBI dbConnect dbWriteTable dbDisconnect
+shinto_db_connection <- function(what = c("CBS","BRKdata","BAGdata","shintoanalytics"), 
+                                 file = "conf/config.yml"){
   
   what <- match.arg(what)
   conf <- config::get(what, file = file)
   
-  dbConnect(RPostgres::Postgres(),
+  DBI::dbConnect(RPostgres::Postgres(),
             dbname = conf$dbname,
             host = conf$dbhost,
             port = 5432,
@@ -52,19 +55,20 @@ logins_schema <- function(){
 clear_login_database <- function(){
   
   db <- shinto_db_connection("shintoanalytics")
-  on.exit(dbDisconnect(db))
+  on.exit(DBI::dbDisconnect(db))
   
   so_schema <- logins_schema()
   
   # manual override :)
   if(FALSE){
-    dbWriteTable(db, "logins", so_schema, overwrite = TRUE)  
+    DBI::dbWriteTable(db, "logins", so_schema, overwrite = TRUE)  
   }
   
 }
 
 
 # geen export
+#' @importFrom tibble as_tibble
 add_logins_row <- function(object, db = NULL){
   
   if(is.null(db)){
@@ -90,8 +94,9 @@ add_logins_row <- function(object, db = NULL){
     
   }
   
-  row <- as_tibble(object)
-  response <- dbWriteTable(db, "logins", row, append = TRUE)
+  row <- tibble::as_tibble(object)
+  print(row)
+  response <- DBI::dbWriteTable(db, "logins", row, append = TRUE)
   
   return(response)
 }
@@ -106,8 +111,9 @@ shinto_write_user_login <- function(user = "unknown",
                                     version = "",
                                     db = NULL, 
                                     nav = NULL,
-                                    session = getDefaultReactiveDomain()){
+                                    session = shiny::getDefaultReactiveDomain()){
   
+  # (1) general
   obj <- list(
     id = uuid::UUIDgenerate(),
     timestamp = as.integer(Sys.time()),
@@ -116,6 +122,7 @@ shinto_write_user_login <- function(user = "unknown",
     user = user  
   )
   
+  # (2) sessio$clientData
   clientdat <- shiny::reactiveValuesToList(session$clientData)
   if(!is.null(clientdat)){
     
@@ -131,22 +138,26 @@ shinto_write_user_login <- function(user = "unknown",
     obj <- c(obj, sessiondat)
   }
   
-  if(is.null(nav)){
-    
+  # (3) and (4)
+  if(!is.null(nav)){
     nav <- list(
-      appCodeName = NA_character_,
-      appName = NA_character_,
-      appVersion = NA_character_,
-      cookieEnabled = NA_character_,
-      language = NA_character_,
-      onLine = NA_character_,
-      platform = NA_character_,
-      userAgent = NA_character_
-    )
-    
+      
+      language = nav$language,
+      cookieEnabled = nav$cookieEnabled,
+      windowWidth = nav$windowWidth,
+      windowHeight = nav$windowHeight,
+      screenWidth = nav$screenWidth,
+      screenHeight = nav$screenHeight,
+      browserName = nav$name,
+      browserVersion = nav$version,
+      osName = nav$osname,
+      osVersion = nav$osversion
+      
+    )  
   }
   
   object <- c(obj, nav)
+  
   response <- add_logins_row(object, db)
   
   return(response)
@@ -162,7 +173,7 @@ last_logins <- function(n = 1, db = NULL){
   }
   
   tbl(db, "logins") %>%
-    arrange(desc(timestamp)) %>%
+    dplyr::arrange(dplyr::desc(timestamp)) %>%
     head(n) %>%
     collect
   

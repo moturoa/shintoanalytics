@@ -24,10 +24,14 @@ Shiny.addCustomMessageHandler("navigatorInfo", function(data){
    screenHeight: win.screen.height
   };
 
+  // bowser.min.js
+  let bow = bowser;
   
-  Shiny.setInputValue("navigatorInfo", nav);
-   
-  Shiny.setInputValue("bowserInfo", bowser);
+  const out = {...nav, ...bow};
+  
+  Shiny.setInputValue("navigatorInfo", out);
+  
+  
 }); 
 
 

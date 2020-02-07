@@ -12,7 +12,7 @@ shinto_write_user_login(
   version = "",
   db = NULL,
   nav = NULL,
-  session = getDefaultReactiveDomain()
+  session = shiny::getDefaultReactiveDomain()
 )
 }
 \description{
