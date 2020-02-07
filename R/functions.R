@@ -18,11 +18,13 @@ shinto_db_connection <- function(what = c("CBS","BRKdata","BAGdata","shintoanaly
 #'@export
 logins_schema <- function(){
   tibble(
+    # (1) general
     id = character(),
     timestamp = integer(),
     application = character(),
     application_version = character(),
     user = character(),
+    # (2) session$clientData
     url_protocol = character(), 
     url_hostname = character(), 
     url_port = character(), 
@@ -31,14 +33,18 @@ logins_schema <- function(){
     url_hash_initial = character(),
     url_hash = character(),
     pixelratio = character(),
-    appCodeName = character(),
-    appName = character(),
-    appVersion = character(),
-    cookieEnabled = character(),
+    # (3) navigator / window info (JS)
     language = character(),
-    onLine = character(),
-    platform = character(),
-    userAgent = character()
+    cookieEnabled = logical(),
+    windowWidth = character(),
+    windowHeight = character(),
+    screenWidth = character(),
+    screenHeight = character(),
+    # (4) bowser (JS)
+    browserName = character(),
+    browserVersion = character(),
+    osName = character(),
+    osVersion = character()
   )
 }
 
@@ -73,10 +79,16 @@ add_logins_row <- function(object, db = NULL){
   
   for(nm in names(object)){
     clas <- cls[nm]
-    fun <- base::get(paste0("as.", clas))
-    object[[nm]] <- fun(object[[nm]])
+    
+    if(!is.na(clas)){
+      fun <- base::get(paste0("as.", clas))
+      object[[nm]] <- fun(object[[nm]])  
+    } else {
+      warning(paste("Variable",nm,"not in class definition - skipped"))
+    }
+    
+    
   }
-  
   
   row <- as_tibble(object)
   response <- dbWriteTable(db, "logins", row, append = TRUE)

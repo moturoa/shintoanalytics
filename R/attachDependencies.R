@@ -8,11 +8,6 @@ browserInfoDependencies <- function() {
                  src = "assets",
                  script = "navigatorInfo/navigatorInfo.js"
     ),
-    htmlDependency(name = "jQuery.browserinfo", version = "0.1",
-                   package = "shintoanalytics",
-                   src = "assets",
-                   script = "jquery.browser/jquery.browser.js"
-    ),
     htmlDependency(name = "bowser", version = "0.1",
                    package = "shintoanalytics",
                    src = "assets",

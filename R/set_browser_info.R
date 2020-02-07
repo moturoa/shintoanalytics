@@ -5,7 +5,6 @@
 set_browser_info <- function(id = "navigatorInfo", session =  getDefaultReactiveDomain()){
   
   session$sendCustomMessage("navigatorInfo", list(data = id))
-  session$sendCustomMessage("browserInfo", list(data = id))
-  session$sendCustomMessage("bowser", list(data = id))
+  
   
 }
