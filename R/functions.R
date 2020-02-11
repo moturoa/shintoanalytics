@@ -95,7 +95,7 @@ add_logins_row <- function(object, db = NULL){
   }
   
   row <- tibble::as_tibble(object)
-  print(row)
+  
   response <- DBI::dbWriteTable(db, "logins", row, append = TRUE)
   
   return(response)

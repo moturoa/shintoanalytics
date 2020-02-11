@@ -31,6 +31,7 @@ log_user_data_module <- function(input, output, session, user, application, vers
     
     if(write_db){
       
+      # Waarom is dit nodig??!?? db boven geopend maar is nooit valid hier.
       if(!dbIsValid(db)){
         db <- shintoanalytics::shinto_db_connection("shintoanalytics")
       }
