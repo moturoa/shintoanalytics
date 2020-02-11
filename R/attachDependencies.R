@@ -1,6 +1,6 @@
 #' Load dependencies in the UI
 #'@export
-browserInfoDependencies <- function() {
+shintoanalyticsDependencies <- function() {
   
   list(
     htmlDependency(name = "browserInfo-assets", version = "0.1",

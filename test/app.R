@@ -2,26 +2,74 @@ library(shiny)
 library(shintoanalytics)
 
 
-db <- shinto_db_connection("shintoanalytics")
+
+
+
+
+log_user_data_module <- function(input, output, session, user, application, version, write_db = TRUE){
+  
+  db <- shintoanalytics::shinto_db_connection("shintoanalytics")
+  on.exit(dbDisconnect(db))
+  
+  session$sendCustomMessage("navigatorInfo", list(id = session$ns("navigatorInfo")))
+  
+  out <- reactiveVal()
+  
+  observe({
+    nav <- input$navigatorInfo
+    req(nav)
+    
+    if(write_db){
+      
+      if(!dbIsValid(db)){
+        db <- shintoanalytics::shinto_db_connection("shintoanalytics")
+      }
+      
+      out(
+        shinto_write_user_login(user = user,
+                                application = application,
+                                version = version,
+                                db =  db,
+                                nav = nav )
+      )
+    }
+    
+    
+  })
+  
+  
+  
+  return(list(nav = reactive(input$navigatorInfo), db_response = out))
+  
+}
+
+
+log_user_data <- function(user, application, version, write_db = TRUE){
+  
+  navinfo <- callModule(log_user_data_module, 
+                        id = "shintolabs", 
+                        user = user,
+                        application = application, 
+                        version = version, 
+                        write_db = write_db)
+  return(navinfo)
+}
+
 
 
 ui <- fluidPage(
-  browserInfoDependencies(),
   
-  
+  shintoanalyticsDependencies(),
   
   fluidRow(
     column(6,
-      tags$h4("navigatorInfo"),
-      verbatimTextOutput("nav_out")  
+           tags$h4("navigatorInfo"),
+           verbatimTextOutput("nav_out")  
     ),
     column(6,
            
-        tags$h4("Log"),
-        actionButton("btn_log", "Write log"),
-        
-        tags$h4("Response"),
-        verbatimTextOutput("txt_out")
+           tags$h4("Response"),
+           verbatimTextOutput("txt_out")
            
     )
     
@@ -32,32 +80,23 @@ ui <- fluidPage(
 server <- function(input, output, session) {
   
 
-  set_browser_info()
+  log_out <- log_user_data(user = "Remko", 
+                           application = "testpackage", 
+                           version = "0.0",
+                           write_db = TRUE)
   
-  onStop(function() {
-    
-    dbDisconnect(db)
-    
-  })  
-
   output$nav_out <- renderPrint({
-    input$navigatorInfo
+    log_out$nav()
   })
   
-  
-  observeEvent(input$btn_log, {
-    nav <- input$navigatorInfo
-    req(nav)
-    
-    out <- shinto_write_user_login(user = "Remko",
-                            application = "package_test",
-                            version = "0.1",
-                            db =  db,
-                            nav = nav )
-    output$txt_out <- renderPrint(out)
+  output$txt_out <- renderPrint({
+    log_out$db_response()
   })
   
-  
+ 
+   
 }
 
 shinyApp(ui, server)
+
+

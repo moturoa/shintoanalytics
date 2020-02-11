@@ -1,6 +1,6 @@
 
 Shiny.addCustomMessageHandler("navigatorInfo", function(data){
-  
+
   let win = window,
     doc = document,
     docElem = doc.documentElement,
@@ -29,7 +29,7 @@ Shiny.addCustomMessageHandler("navigatorInfo", function(data){
   
   const out = {...nav, ...bow};
   
-  Shiny.setInputValue("navigatorInfo", out);
+  Shiny.setInputValue(data.id, out);
   
   
 }); 
