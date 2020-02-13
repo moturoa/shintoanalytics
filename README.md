@@ -17,7 +17,7 @@ Zie `test/` voor een voorbeeld applicatie. De configuratie moet dus ook in `test
 In de UI moet er geplaatst worden,
 
 ```
-browserInfoDependencies()
+shintoanalyticsDependencies()
 ```
 
 (we gebruiken wat JS om browser info op te vragen).
@@ -25,18 +25,13 @@ browserInfoDependencies()
 In de server plaatsen we dit blok:
 
 ```
-  observe({
-    set_browser_info()
-    nav <- input$navigatorInfo
-    req(nav)
-    
-    
-    resp <- shinto_write_user_login(user = get_user(), 
-                            application = "package_test", 
-                            nav = nav)
-    
-  })
+log_data <- shintoanalytics::log_user_data(user = "Remko", 
+                         application = "testpackage", 
+                         version = "0.0",
+                         write_db = TRUE)
 ```
 
-Enigzins omslachtig maar het werkt.
+Het object `log_data` bevat twee reactive's, namelijk:
+- `log_data$nav()` : Browser / OS / screen / etc. informatie.
+- `log_data$db_response()` : Response van de DB als `write_db = TRUE` (TRUE is goed).
 
