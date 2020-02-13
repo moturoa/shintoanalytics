@@ -2,21 +2,24 @@
 #' Main function to log user data and return browser/navigator/os info
 #' @description Use in server function
 #' @export 
-log_user_data <- function(user, application, version, write_db = TRUE){
+log_user_data <- function(user, application, version, write_db = TRUE, write_db_local = FALSE){
   
   navinfo <- callModule(log_user_data_module, 
                         id = "shintolabs", 
                         user = user,
                         application = application, 
                         version = version, 
-                        write_db = write_db)
+                        write_db = write_db,
+                        write_db_local = write_db_local)
   return(navinfo)
 }
 
 
 
 # Module. Used by log_user_data(), not by user.
-log_user_data_module <- function(input, output, session, user, application, version, write_db = TRUE){
+log_user_data_module <- function(input, output, session, user, application, 
+                                 version, write_db = TRUE,
+                                 write_db_local = FALSE){
   
   db <- shintoanalytics::shinto_db_connection("shintoanalytics")
   on.exit(dbDisconnect(db))
@@ -35,14 +38,19 @@ log_user_data_module <- function(input, output, session, user, application, vers
       if(!dbIsValid(db)){
         db <- shintoanalytics::shinto_db_connection("shintoanalytics")
       }
+      print("writing")
       
-      out(
-        shinto_write_user_login(user = user,
-                                application = application,
-                                version = version,
-                                db =  db,
-                                nav = nav )
-      )
+      # Niet schrijven als we in / bezig zijn (local)
+      if(write_db_local || session$clientData$url_pathname != "/"){
+        out(
+          shinto_write_user_login(user = user,
+                                  application = application,
+                                  version = version,
+                                  db =  db,
+                                  nav = nav )
+        )
+      }
+      
     }
     
     

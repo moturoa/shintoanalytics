@@ -4,7 +4,13 @@
 \alias{log_user_data}
 \title{Main function to log user data and return browser/navigator/os info}
 \usage{
-log_user_data(user, application, version, write_db = TRUE)
+log_user_data(
+  user,
+  application,
+  version,
+  write_db = TRUE,
+  write_db_local = FALSE
+)
 }
 \description{
 Use in server function
