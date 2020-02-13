@@ -28,7 +28,7 @@ log_user_data_module <- function(input, output, session, user, application,
   
   out <- reactiveVal()
   
-  observe({
+  observeEvent(input$navigatorInfo, once = TRUE, {
     nav <- input$navigatorInfo
     req(nav)
     

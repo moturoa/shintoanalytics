@@ -30,7 +30,9 @@ server <- function(input, output, session) {
   log_out <- shintoanalytics::log_user_data(user = "Remko", 
                            application = "testpackage", 
                            version = "0.0",
-                           write_db = TRUE)
+                           write_db = TRUE,
+                           write_db_local = TRUE
+                           )
   
   output$nav_out <- renderPrint({
     log_out$nav()
