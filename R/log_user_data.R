@@ -38,10 +38,11 @@ log_user_data_module <- function(input, output, session, user, application,
       if(!dbIsValid(db)){
         db <- shintoanalytics::shinto_db_connection("shintoanalytics")
       }
-      print("writing")
+      
       
       # Niet schrijven als we in / bezig zijn (local)
       if(write_db_local || session$clientData$url_pathname != "/"){
+        #flog.info("Login data naar shintoanalytics gestuurd.", name = "shintoanalytics")
         out(
           shinto_write_user_login(user = user,
                                   application = application,
@@ -49,6 +50,9 @@ log_user_data_module <- function(input, output, session, user, application,
                                   db =  db,
                                   nav = nav )
         )
+      } else {
+        #flog.info("Lokale app  - Login data *niet* naar shintoanalytics gestuurd.", 
+        #          name = "shintoanalytics")
       }
       
     }
