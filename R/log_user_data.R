@@ -2,7 +2,8 @@
 #' Main function to log user data and return browser/navigator/os info
 #' @description Use in server function
 #' @export 
-log_user_data <- function(user, application, version, write_db = TRUE, write_db_local = FALSE){
+log_user_data <- function(user, application, version, write_db = TRUE, 
+                          write_db_local = FALSE, file_config = "conf/config.yml"){
   
   navinfo <- callModule(log_user_data_module, 
                         id = "shintolabs", 
@@ -10,7 +11,8 @@ log_user_data <- function(user, application, version, write_db = TRUE, write_db_
                         application = application, 
                         version = version, 
                         write_db = write_db,
-                        write_db_local = write_db_local)
+                        write_db_local = write_db_local,
+                        file_config = file_config)
   return(navinfo)
 }
 
@@ -18,10 +20,10 @@ log_user_data <- function(user, application, version, write_db = TRUE, write_db_
 
 # Module. Used by log_user_data(), not by user.
 log_user_data_module <- function(input, output, session, user, application, 
-                                 version, write_db = TRUE,
+                                 version, write_db = TRUE, file_config = "conf/config.yml",
                                  write_db_local = FALSE){
   
-  db <- shintoanalytics::shinto_db_connection("shintoanalytics")
+  db <- shintoanalytics::shinto_db_connection("shintoanalytics", file = file_config)
   on.exit(dbDisconnect(db))
   
   session$sendCustomMessage("navigatorInfo", list(id = session$ns("navigatorInfo")))
