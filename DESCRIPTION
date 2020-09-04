@@ -1,12 +1,12 @@
 Package: shintoanalytics
 Type: Package
 Title: Log user login and browser info to shintoanalytics
-Version: 0.2-4
+Version: 0.2-5
 Author: Remko Duursma
 Maintainer: Remko Duursma <remko@shintolabs.nl>
 Description: Writes login data to Shinto Labs dev server.
 License: GPL-2
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1
 Depends: dplyr, DBI, dbplyr, glue, RPostgres, htmltools, uuid

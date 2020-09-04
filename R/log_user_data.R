@@ -23,9 +23,7 @@ log_user_data_module <- function(input, output, session, user, application,
                                  version, write_db = TRUE, file_config = "conf/config.yml",
                                  write_db_local = FALSE){
   
-  db <- shintoanalytics::shinto_db_connection("shintoanalytics", file = file_config)
-  on.exit(dbDisconnect(db))
-  
+
   session$sendCustomMessage("navigatorInfo", list(id = session$ns("navigatorInfo")))
   
   out <- reactiveVal()
@@ -36,15 +34,13 @@ log_user_data_module <- function(input, output, session, user, application,
     
     if(write_db){
       
-      # Waarom is dit nodig??!?? db boven geopend maar is nooit valid hier.
-      if(!dbIsValid(db)){
-        db <- shintoanalytics::shinto_db_connection("shintoanalytics")
-      }
-      
+      db <- shintoanalytics::shinto_db_connection("shintoanalytics", 
+                                                  file = file_config)
+      on.exit(dbDisconnect(db))
       
       # Niet schrijven als we in / bezig zijn (local)
       if(write_db_local || session$clientData$url_pathname != "/"){
-        #flog.info("Login data naar shintoanalytics gestuurd.", name = "shintoanalytics")
+        flog.info("Login data naar shintoanalytics gestuurd.", name = "shintoanalytics")
         out(
           shinto_write_user_login(user = user,
                                   application = application,

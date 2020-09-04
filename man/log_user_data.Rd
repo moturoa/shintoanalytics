@@ -9,7 +9,8 @@ log_user_data(
   application,
   version,
   write_db = TRUE,
-  write_db_local = FALSE
+  write_db_local = FALSE,
+  file_config = "conf/config.yml"
 )
 }
 \description{
