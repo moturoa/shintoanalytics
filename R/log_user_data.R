@@ -20,10 +20,10 @@ log_user_data <- function(user, application, version, write_db = TRUE,
 #' @description When run, input$navigatorInfo is created, a list with lots of info on your system, including
 #' Shiny session clientdata (user, url, port, etc.), navigator info (window size, screen size, resolution), and browser
 #' info (using bowser.js), version, and platform (win/mac/mobile etc.).
-#' @param ns The namespace function. When used from a module, you probably want get_navigator_info(session$ns).
+#' @param session The session object.
 #' @export
-get_navigator_info <- function(ns = NS(NULL)){
-  session$sendCustomMessage("navigatorInfo", list(id = ns("navigatorInfo")))
+get_navigator_info <- function(session = getDefaultReactiveDomain()){
+  session$sendCustomMessage("navigatorInfo", list(id = session$ns("navigatorInfo")))
 }
 
 
