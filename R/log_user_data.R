@@ -16,6 +16,15 @@ log_user_data <- function(user, application, version, write_db = TRUE,
   return(navinfo)
 }
 
+#' Read navigator information and make available as a Shiny input
+#' @description When run, input$navigatorInfo is created, a list with lots of info on your system, including
+#' Shiny session clientdata (user, url, port, etc.), navigator info (window size, screen size, resolution), and browser
+#' info (using bowser.js), version, and platform (win/mac/mobile etc.).
+#' @param ns The namespace function. When used from a module, you probably want get_navigator_info(session$ns).
+#' @export
+get_navigator_info <- function(ns = NS(NULL)){
+  session$sendCustomMessage("navigatorInfo", list(id = ns("navigatorInfo")))
+}
 
 
 # Module. Used by log_user_data(), not by user.
@@ -24,7 +33,7 @@ log_user_data_module <- function(input, output, session, user, application,
                                  write_db_local = FALSE){
   
 
-  session$sendCustomMessage("navigatorInfo", list(id = session$ns("navigatorInfo")))
+  get_navigator_info(ns = session$ns)
   
   out <- reactiveVal()
   
