@@ -33,7 +33,7 @@ log_user_data_module <- function(input, output, session, user, application,
                                  write_db_local = FALSE){
   
 
-  get_navigator_info(ns = session$ns)
+  get_navigator_info(session)
   
   out <- reactiveVal()
   
