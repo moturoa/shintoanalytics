@@ -32,11 +32,12 @@ log_user_data_module <- function(input, output, session, user, application,
                                  version, write_db = TRUE, file_config = "conf/config.yml",
                                  write_db_local = FALSE){
   
-
+  # Read browser, OS info etc. Becomes available as a reactive (input$navigatorInfo)
   get_navigator_info(session)
   
   out <- reactiveVal()
   
+  # When nav info available, process it further.
   observeEvent(input$navigatorInfo, once = TRUE, {
     nav <- input$navigatorInfo
     req(nav)
